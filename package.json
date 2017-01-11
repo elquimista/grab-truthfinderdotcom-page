@@ -1,0 +1,17 @@
+{
+  "name": "grab-truthfinder-dot-com-page",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --harmony-async-await index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Joey Cruz",
+  "license": "ISC",
+  "dependencies": {
+    "csrf-login": "^1.15.1",
+    "dotenv": "^4.0.0",
+    "requestify": "^0.2.5"
+  }
+}
