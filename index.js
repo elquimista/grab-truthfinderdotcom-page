@@ -13,13 +13,20 @@ const router = new Router();
 
 const { ZAPIER_WEBHOOKS_URL, TRUTHFINDER_LOGIN_EMAIL, TRUTHFINDER_LOGIN_PASSWORD } = process.env;
 
-router.post('/', async (ctx, next) => {
+async function enquireProfileData({ phoneNumber }) {
+  const info = await csrfLogin({ email: TRUTHFINDER_LOGIN_EMAIL, password: TRUTHFINDER_LOGIN_PASSWORD });
+  const data = await info.requestAsync(`/dashboard/report/phone/${phoneNumber}`, {});
+  const res = await requestify.post(ZAPIER_WEBHOOKS_URL, { rawHtml: data.body });
+  return res;
+}
+
+router.post('/', (ctx, next) => {
   const { phoneNumber } = ctx.request.body;
   if (phoneNumber) {
-    const info = await csrfLogin({ email: TRUTHFINDER_LOGIN_EMAIL, password: TRUTHFINDER_LOGIN_PASSWORD });
-    const data = await info.requestAsync(`/dashboard/report/phone/${phoneNumber}`, {});
-    const res = await requestify.post(ZAPIER_WEBHOOKS_URL, { rawHtml: data.body });
-    ctx.body = JSON.parse(res.body);
+    enquireProfileData({ phoneNumber });
+    ctx.body = {
+      status: 'success'
+    };
   } else {
     ctx.body = {
       status: 'error',
