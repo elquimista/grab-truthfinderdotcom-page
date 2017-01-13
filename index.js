@@ -14,12 +14,18 @@ const router = new Router();
 const { ZAPIER_WEBHOOKS_URL, TRUTHFINDER_LOGIN_EMAIL, TRUTHFINDER_LOGIN_PASSWORD } = process.env;
 
 async function enquireProfileData({ eventName, firstName, lastName, email, phoneNumber }) {
-  const info = await csrfLogin({ email: TRUTHFINDER_LOGIN_EMAIL, password: TRUTHFINDER_LOGIN_PASSWORD });
-  const data = await info.requestAsync(`/dashboard/report/phone/${phoneNumber}`, {});
-  const res = await requestify.post(ZAPIER_WEBHOOKS_URL, {
-    eventName, firstName, lastName, email, phoneNumber,
-    rawHtml: data.body
-  });
+  let res, obj = arguments[0];
+
+  if (phoneNumbe.replace(/\D/g, '').match(/^1?[2-9]\d{2}[2-9](?!11)\d{2}\d{4}$/)) {
+    const info = await csrfLogin({ email: TRUTHFINDER_LOGIN_EMAIL, password: TRUTHFINDER_LOGIN_PASSWORD });
+    const data = await info.requestAsync(`/dashboard/report/phone/${phoneNumber}`, {});
+    obj = Object.assign({}, obj, { rawHtml: data.body });
+  } else {
+    obj = Object.assign({}, obj, { rawHtml: 'Invalid phone number' });
+  }
+
+  res = await requestify.post(ZAPIER_WEBHOOKS_URL, obj);
+  console.log(res);
   return res;
 }
 
