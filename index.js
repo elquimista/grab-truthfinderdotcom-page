@@ -42,6 +42,9 @@ router.post('/', (ctx, next) => {
       message: 'phoneNumber must not be empty.'
     };
   }
+
+  ctx.set('Access-Control-Allow-Origin', '*');
+  ctx.set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   console.log(ctx.body);
   return next();
 });
