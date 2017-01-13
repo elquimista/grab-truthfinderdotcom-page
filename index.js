@@ -14,12 +14,19 @@ const { ZAPIER_WEBHOOKS_URL, TRUTHFINDER_LOGIN_EMAIL, TRUTHFINDER_LOGIN_PASSWORD
 
 router.get('/', async (ctx, next) => {
   const { phoneNumber } = ctx.query;
-  const info = await csrfLogin({ email: TRUTHFINDER_LOGIN_EMAIL, password: TRUTHFINDER_LOGIN_PASSWORD });
-  const data = await info.requestAsync(`/dashboard/report/phone/${phoneNumber}`, {});
-  const res = await requestify.post(ZAPIER_WEBHOOKS_URL, { rawHtml: data.body });
+  if (phoneNumber) {
+    const info = await csrfLogin({ email: TRUTHFINDER_LOGIN_EMAIL, password: TRUTHFINDER_LOGIN_PASSWORD });
+    const data = await info.requestAsync(`/dashboard/report/phone/${phoneNumber}`, {});
+    const res = await requestify.post(ZAPIER_WEBHOOKS_URL, { rawHtml: data.body });
 
-  console.log(res.body);
-  ctx.body = res.body;
+    console.log(res.body);
+    ctx.body = res.body;
+  } else {
+    ctx.body = {
+      status: 'error',
+      message: 'phoneNumber must not be empty.'
+    };
+  }
   return next();
 });
 
