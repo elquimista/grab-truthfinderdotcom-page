@@ -21,7 +21,7 @@ async function enquireProfileData({ eventName, firstName, lastName, email, phone
     const data = await info.requestAsync(`/dashboard/report/phone/${phoneNumber}`, {});
     obj = Object.assign({}, obj, { rawHtml: data.body });
   } else {
-    obj = Object.assign({}, obj, { rawHtml: 'Invalid phone number' });
+    obj = Object.assign({}, obj, { rawHtml: 'invalid phone number' });
   }
 
   res = await requestify.post(ZAPIER_WEBHOOKS_URL, obj);
