@@ -32,7 +32,7 @@ async function enquireProfileData({ eventName, firstName, lastName, email, phone
 router.post('/', (ctx, next) => {
   const { eventName, firstName, lastName, email, phoneNumber } = ctx.request.body;
   if (phoneNumber) {
-    enquireProfileData({ phoneNumber });
+    enquireProfileData({ eventName, firstName, lastName, email, phoneNumber });
     ctx.body = {
       status: 'success'
     };
