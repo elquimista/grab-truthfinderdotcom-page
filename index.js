@@ -18,8 +18,6 @@ router.get('/', async (ctx, next) => {
     const info = await csrfLogin({ email: TRUTHFINDER_LOGIN_EMAIL, password: TRUTHFINDER_LOGIN_PASSWORD });
     const data = await info.requestAsync(`/dashboard/report/phone/${phoneNumber}`, {});
     const res = await requestify.post(ZAPIER_WEBHOOKS_URL, { rawHtml: data.body });
-
-    console.log(res.body);
     ctx.body = res.body;
   } else {
     ctx.body = {
@@ -27,10 +25,11 @@ router.get('/', async (ctx, next) => {
       message: 'phoneNumber must not be empty.'
     };
   }
+  console.log(ctx.body);
   return next();
 });
 
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-app.listen(5000);
+app.listen(process.env.PORT || 5000);
