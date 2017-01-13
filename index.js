@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const Koa = require('koa');
 const Router = require('koa-router');
+const parseBody = require('koa-body');
 const csrfLogin = require('csrf-login');
 const requestify = require('requestify');
 
@@ -12,13 +13,13 @@ const router = new Router();
 
 const { ZAPIER_WEBHOOKS_URL, TRUTHFINDER_LOGIN_EMAIL, TRUTHFINDER_LOGIN_PASSWORD } = process.env;
 
-router.get('/', async (ctx, next) => {
-  const { phoneNumber } = ctx.query;
+router.post('/', async (ctx, next) => {
+  const { phoneNumber } = ctx.request.body;
   if (phoneNumber) {
     const info = await csrfLogin({ email: TRUTHFINDER_LOGIN_EMAIL, password: TRUTHFINDER_LOGIN_PASSWORD });
     const data = await info.requestAsync(`/dashboard/report/phone/${phoneNumber}`, {});
     const res = await requestify.post(ZAPIER_WEBHOOKS_URL, { rawHtml: data.body });
-    ctx.body = res.body;
+    ctx.body = JSON.parse(res.body);
   } else {
     ctx.body = {
       status: 'error',
@@ -29,6 +30,7 @@ router.get('/', async (ctx, next) => {
   return next();
 });
 
+app.use(parseBody());
 app.use(router.routes());
 app.use(router.allowedMethods());
 
