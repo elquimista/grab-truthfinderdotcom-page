@@ -16,7 +16,7 @@ const { ZAPIER_WEBHOOKS_URL, TRUTHFINDER_LOGIN_EMAIL, TRUTHFINDER_LOGIN_PASSWORD
 async function enquireProfileData({ eventName, firstName, lastName, email, phoneNumber }) {
   let res, obj = arguments[0];
 
-  if (phoneNumbe.replace(/\D/g, '').match(/^1?[2-9]\d{2}[2-9](?!11)\d{2}\d{4}$/)) {
+  if (phoneNumber.replace(/\D/g, '').match(/^1?[2-9]\d{2}[2-9](?!11)\d{2}\d{4}$/)) {
     const info = await csrfLogin({ email: TRUTHFINDER_LOGIN_EMAIL, password: TRUTHFINDER_LOGIN_PASSWORD });
     const data = await info.requestAsync(`/dashboard/report/phone/${phoneNumber}`, {});
     obj = Object.assign({}, obj, { rawHtml: data.body });
