@@ -16,12 +16,19 @@ const { ZAPIER_WEBHOOKS_URL, TRUTHFINDER_LOGIN_EMAIL, TRUTHFINDER_LOGIN_PASSWORD
 async function enquireProfileData({ eventName, firstName, lastName, email, phoneNumber }) {
   let res, obj = arguments[0];
 
-  if (phoneNumber.replace(/\D/g, '').match(/^1?[2-9]\d{2}[2-9](?!11)\d{2}\d{4}$/)) {
-    const info = await csrfLogin({ email: TRUTHFINDER_LOGIN_EMAIL, password: TRUTHFINDER_LOGIN_PASSWORD });
-    const data = await info.requestAsync(`/dashboard/report/phone/${phoneNumber}`, {});
-    obj = Object.assign({}, obj, { rawHtml: data.body });
-  } else {
-    obj = Object.assign({}, obj, { rawHtml: 'invalid phone number' });
+  try {
+    if (phoneNumber.replace(/\D/g, '').match(/^1?[2-9]\d{2}[2-9](?!11)\d{2}\d{4}$/)) {
+      const info = await csrfLogin({ email: TRUTHFINDER_LOGIN_EMAIL, password: TRUTHFINDER_LOGIN_PASSWORD });
+      const data = await info.requestAsync(`/dashboard/report/phone/${phoneNumber}`, {});
+      obj = Object.assign({}, obj, { rawHtml: data.body });
+    } else {
+      obj = Object.assign({}, obj, { rawHtml: 'invalid phone number' });
+    }
+  }
+  catch (err) {
+    obj = Object.assign({}, obj, {
+      rawHtml: `An error occured while processing data: ${err.name} - ${err.message}`
+    });
   }
 
   res = await requestify.post(ZAPIER_WEBHOOKS_URL, obj);

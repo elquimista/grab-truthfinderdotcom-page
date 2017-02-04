@@ -1,6 +1,8 @@
 {
   "host": "https://www.truthfinder.com",
-  "loginFormId": "login",
+  "loginFormSelector": "name=\"login\"",
+  "loginUsernameField": "email",
+  "loginPasswordField": "password",
   "tokenFieldName": "csrf_token",
   "loginPath": "/login"
 }
